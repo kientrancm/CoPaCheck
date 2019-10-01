@@ -39,12 +39,18 @@ def GCAPE_Check(nvm, coding, parameter):
 
 
 #BCM
+ws_coding = ("CodingHella", "CodingGeely", "CodingUser")
+
 def BCM_Check(nvm, coding, parameter):
     print("BCM Check")
     #open file nvm
     nvm_file = load_workbook(nvm)
-    nvm_coding = nvm_file['']
+    ws_coding_0 = nvm_file[ws_coding[0]]
+    ws_coding_1 = nvm_file[ws_coding[1]]
+    ws_coding_2 = nvm_file[ws_coding[2]]
 
+    coding_file = load_workbook(coding)
+    parameter_file = load_workbook(parameter)
 
 #GUI
 class GUI(tkinter.Frame):
@@ -168,6 +174,7 @@ class GUI(tkinter.Frame):
 
         if oktorun == True:
             self.setStatus("CoPaCheck is running....")
+            #Xu ly duong dan file
             nvm_pfile = self.file_paths_nvm
             nvm_name = os.path.splitext(nvm_pfile)[0]
             cvt_xls_to_xlsx(nvm_pfile, nvm_name)
@@ -187,7 +194,7 @@ class GUI(tkinter.Frame):
             elif self.BCM.get() == 1:
                 #Perform BCM project
                 print("BCM")
-                #BCM_Check(nvm_pfile, coding_pfile, parameter_pfile)
+                BCM_Check(nvm_pfile, coding_pfile, parameter_pfile)
 
             self.setStatus('Finished')
 
