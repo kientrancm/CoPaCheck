@@ -38,18 +38,113 @@ def GCAPE_Check(nvm, coding, parameter):
     print("GCAPE Check")
 
 
+
+
+## Find a in nvm file
+def find_coding(name, default, nvm):
+    nvmf = load_workbook(nvm)
+    coding_hella = nvmf['CodingHella']
+    coding_geely = nvmf['CodingGeely']
+    coding_user = nvmf['CodingUser']
+
+    coding_hella_flag = False
+    coding_geely_flag = False
+    coding_user_flag = False
+
+    default_flag = False
+
+    for datarows in range(2, coding_hella.max_row):
+        if coding_hella.cell(row = datarows, column = 2).value == name:
+            coding_hella_flag = True
+            if coding_hella.cell(row = datarows, column = 4).value == default:
+                default_flag = True
+            else:
+                default_flag = True
+                new_default = coding_hella.cell(row = datarows, column = 4)
+        else:
+            pass
+            #coding not in codinghellasheet
+
+    if coding_hella_flag == False:
+        for datarows in range(2, coding_geely.max_row):
+            if coding_geely.cell(row = datarows, column = 2).value == name:
+                coding_geely_flag = True
+                if coding_geely.cell(row=datarows, column=4).value == default:
+                    default_flag = True
+                else:
+                    default_flag = True
+                    new_default = coding_geely.cell(row=datarows, column=4)
+            else:
+                pass
+                # coding not in codinghellasheet
+    elif coding_geely_flag == False:
+        for datarows in range(2, coding_user.max_row):
+            if coding_user.cell(row = datarows, column = 2).value == name:
+                coding_user = True
+                if coding_user.cell(row=datarows, column=4).value == default:
+                    default_flag = True
+                else:
+                    default_flag = True
+                    new_default = coding_user.cell(row=datarows, column=4)
+            else:
+                pass
+                # coding not in codinghellasheet
+    else:
+        #not in coding
+
+
+
+
+#----------------------------------------------------
+
 #BCM
 ws_coding = ("CodingHella", "CodingGeely", "CodingUser")
+
+## Title of coding
+Co_name_title = 2
+Co_defaultvalue_title = 3
+Co_SafetyClassification_F = 4
+Co_ObjectContent_F = 5
+
+## Title of parameter
 
 def BCM_Check(nvm, coding, parameter):
     print("BCM Check")
     #open file nvm
     nvm_file = load_workbook(nvm)
-    ws_coding_0 = nvm_file[ws_coding[0]]
-    ws_coding_1 = nvm_file[ws_coding[1]]
-    ws_coding_2 = nvm_file[ws_coding[2]]
 
     coding_file = load_workbook(coding)
+    data_coding_file = coding_file.active
+    max_row = data_coding_file.max_row
+    max_column = data_coding_file.max_column
+
+    data_coding_file.cell(row=1, column=11).value = "Default Value by Number"
+    ##
+    for data_rows in range(2,max_row + 1):
+        req = data_coding_file.cell(row=data_rows, column = Co_ObjectContent_F).value
+        if req == "Requirement":
+            #Requirement then we will check the default value
+            defaultvalue = data_coding_file.cell(row=data_rows, column = Co_defaultvalue_title).value
+
+            #this column is the 1st value of default value in text
+            defaultvalue_c1 = data_coding_file.cell(row=data_rows, column = 7).value
+
+            # this column is the 2nd value of default value in text
+            defaultvalue_c2 = data_coding_file.cell(row=data_rows, column = 9).value
+
+            default_value = data_coding_file.cell(row=data_rows, column=11).value
+            if defaultvalue == defaultvalue_c1:
+                default_value = data_coding_file.cell(row=data_rows, column = 8).value
+            elif defaultvalue == defaultvalue_c2:
+                default_value = data_coding_file.cell(row=data_rows, column=10).value
+            else:
+                default_value = "NOK"
+        else:
+            data_coding_file.cell(row=data_rows, column=11).value = "NOT REQUIREMENT"
+
+    coding_file.save(coding)
+    coding_file.close()
+
     parameter_file = load_workbook(parameter)
 
 #GUI
