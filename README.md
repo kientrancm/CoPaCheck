@@ -1,10 +1,7 @@
 # CoPaCheck
-# Hella
-# Kien Tran
-# Oct 01 2019
-# Python 37
+CoPaCheck is a tool for support testing in Hella Company
 
-This is a tool created for check the default value of coding and default value of parameter and get the address of parameter on NVM.
+This is a tool check the default value of coding and parameter on DOORS and get the address of parameter on NVM.
 An Input files:
 1. Coding excel file exported from DOORS
 2. Parameter excel file exported from DOORS
