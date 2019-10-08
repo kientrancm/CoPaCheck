@@ -90,62 +90,177 @@ def find_coding(name, default, nvm):
                 pass
                 # coding not in codinghellasheet
     else:
+        pass
         #not in coding
 
 
 
 
 #----------------------------------------------------
+#DefaultValue from Text to number
+#This functions is check a coding
+#If the coding is requirement, we will convert the default values from text to number.
+def Coding_DefaultValue(file):
+    file_coding = load_workbook(file)
+    ws_coding = file_coding.active
+    max_row = ws_coding.max_row
+    ws_coding.cell(row = 1, column=11).value = "Default value/Error"
 
-#BCM
-ws_coding = ("CodingHella", "CodingGeely", "CodingUser")
+    for data_rows in range(2, max_row + 1):
+        req = ws_coding.cell(row=data_rows, column=5).value
+        if req == "Requirement":
+            defaultvalue = ws_coding.cell(row=data_rows, column=3).value
+            if defaultvalue == ws_coding.cell(row=data_rows, column=7).value:
+                ws_coding.cell(row=data_rows, column=11).value = ws_coding.cell(row=data_rows, column=8).value
+            elif defaultvalue == ws_coding.cell(row=data_rows, column=9).value:
+                ws_coding.cell(row=data_rows, column=11).value = ws_coding.cell(row=data_rows, column=10).value
+            else:
+                ws_coding.cell(row=data_rows, column=11).value = "NOK"
+        else:
+            ws_coding.cell(row=data_rows, column=11).value = ""
 
-## Title of coding
-Co_name_title = 2
-Co_defaultvalue_title = 3
-Co_SafetyClassification_F = 4
-Co_ObjectContent_F = 5
+    file_coding.save(file)
+    file_coding.close()
 
-## Title of parameter
+#This functions will be check the coding_name/coding file in coding/nvm file
+#The output will be OK, NOK or Cannot find the coding in NVM
+def BCM_Coding_Check(coding, nvm):
+    print("Check coding...")
+    nvm_wb = load_workbook(nvm)
+    CodingHella = nvm_wb['CodingHella']
+    CodingGeely = nvm_wb['CodingGeely']
+    CodingUser = nvm_wb['CodingUser']
+
+    Coding_DefaultValue(coding)
+
+    coding_wb = load_workbook(coding)
+    coding_ws = coding_wb.active
+    max_row = coding_ws.max_row
+    coding_ws.cell(row=1, column=12).value = "Status"
+    coding_ws.cell(row=1, column=13).value = "Default value on NVM"
+
+    #Get the coding name in coding file
+    #and then check codingname in nvm file
+    for data_rows in range(2, max_row + 1):
+        req = coding_ws.cell(row=data_rows, column=5).value
+        coding_name = coding_ws.cell(row=data_rows, column=2).value
+        default_value = coding_ws.cell(row=data_rows, column=11).value
+        if req == "Requirement":
+            checkisOK = False
+            for i in range(2, CodingHella.max_row + 1):
+                if CodingHella.cell(row=i, column=2).value == coding_name:
+                    checkisOK = True
+                    if CodingHella.cell(row=i, column=4).value == default_value:
+                        coding_ws.cell(row=data_rows, column=12).value = "OK"
+                        coding_ws.cell(row=data_rows, column=13).value = default_value
+                    else:
+                        coding_ws.cell(row=data_rows, column=12).value = "The default value is not match. \nKindly help to check by manualy"
+                        coding_ws.cell(row=data_rows, column=13).value = CodingHella.cell(row=i, column=4).value
+
+            if checkisOK == False:
+                for i in range(2, CodingGeely.max_row + 1):
+                    if CodingGeely.cell(row=i, column=2).value == coding_name:
+                        checkisOK = True
+                        if CodingGeely.cell(row=i, column=4).value == default_value:
+                            coding_ws.cell(row=data_rows, column=12).value = "OK"
+                            coding_ws.cell(row=data_rows, column=13).value = default_value
+                        else:
+                            coding_ws.cell(row=data_rows, column=12).value = "The default value is not match. \nKindly help to check by manualy"
+                            coding_ws.cell(row=data_rows, column=13).value = CodingGeely.cell(row=i, column=4).value
+
+            if checkisOK == False:
+                for i in range(2, CodingUser.max_row + 1):
+                    if CodingUser.cell(row=i, column=2).value == coding_name:
+                        checkisOK = True
+                        if CodingUser.cell(row=i, column=4).value == default_value:
+                            coding_ws.cell(row=data_rows, column=12).value = "OK"
+                            coding_ws.cell(row=data_rows, column=13).value = default_value
+                        else:
+                            coding_ws.cell(row=data_rows, column=12).value = "The default value is not match. \nKindly help to check by manualy"
+                            coding_ws.cell(row=data_rows, column=13).value = CodingUser.cell(row=i, column=4).value
+
+            if checkisOK == False:
+                coding_ws.cell(row=data_rows, column=12).value = "The coding name is not found in NVM. \nKindly help to check by manualy"
+
+    coding_wb.save(coding)
+    coding_wb.close()
+    nvm_wb.close()
+
+def BCM_Parameter_Check(parameter, nvm):
+    print("Check parameter...")
+    nvm_wb = load_workbook(nvm)
+    ASILA = nvm_wb['ASILAParameter']
+    ASILB = nvm_wb['ASILBParameter']
+    NonASIL = nvm_wb['NonASILParameter']
+
+    parameter_wb = load_workbook(parameter)
+    parameter_ws = parameter_wb.active
+    max_row = parameter_ws.max_row
+
+    parameter_ws.cell(row=1, column=7).value = "Status"
+    parameter_ws.cell(row=1, column=8).value = "Address"
+    parameter_ws.cell(row=1, column=9).value = "Default value on NVM"
+
+    for data_rows in range(2, max_row + 1):
+        #Check requirement
+        req = parameter_ws.cell(row=data_rows, column=6).value
+        par_name = parameter_ws.cell(row=data_rows, column=2).value
+        par_default_value = parameter_ws.cell(row=data_rows, column=3).value
+        par_resolution = parameter_ws.cell(row=data_rows, column=4).value
+        par_safety = parameter_ws.cell(row=data_rows, column=5).value
+
+        #value = par_default_value / par_resolution
+        if req == "Requirement":
+            checkisOK = False
+            if par_safety == "ASIL A":
+                for i in range(2, ASILA.max_row + 1):
+                    if ASILA.cell(row=i, column=2).value == par_name:
+                        checkisOK = True
+                        if ASILA.cell(row=i, column=4).value * par_resolution == par_default_value:
+                            parameter_ws.cell(row=data_rows, column=7).value = "OK"
+                            parameter_ws.cell(row=data_rows, column=8).value = ASILA.cell(row=i, column=8).value
+                            parameter_ws.cell(row=data_rows, column=9).value = ASILA.cell(row=i, column=4).value
+                        else:
+                            parameter_ws.cell(row=data_rows, column=7).value = "The default value is NOK"
+                            parameter_ws.cell(row=data_rows, column=8).value = ASILA.cell(row=i, column=8).value
+                            parameter_ws.cell(row=data_rows, column=9).value = ASILA.cell(row=i, column=4).value
+            elif par_safety == "ASIL B":
+                for i in range(2, ASILB.max_row + 1):
+                    if ASILB.cell(row=i, column=2).value == par_name:
+                        checkisOK = True
+                        if ASILB.cell(row=i, column=4).value * par_resolution == par_default_value:
+                            parameter_ws.cell(row=data_rows, column=7).value = "OK"
+                            parameter_ws.cell(row=data_rows, column=8).value = ASILB.cell(row=i, column=8).value
+                            parameter_ws.cell(row=data_rows, column=9).value = ASILB.cell(row=i, column=4).value
+                        else:
+                            parameter_ws.cell(row=data_rows, column=7).value = "The default value is NOK"
+                            parameter_ws.cell(row=data_rows, column=8).value = ASILB.cell(row=i, column=8).value
+                            parameter_ws.cell(row=data_rows, column=9).value = ASILB.cell(row=i, column=4).value
+            elif par_safety == "QM":
+                for i in range(2, NonASIL.max_row + 1):
+                    if NonASIL.cell(row=i, column=2).value == par_name:
+                        checkisOK = True
+                        if NonASIL.cell(row=i, column=4).value * par_resolution == par_default_value:
+                            parameter_ws.cell(row=data_rows, column=7).value = "OK"
+                            parameter_ws.cell(row=data_rows, column=8).value = NonASIL.cell(row=i, column=8).value
+                            parameter_ws.cell(row=data_rows, column=9).value = NonASIL.cell(row=i, column=4).value
+                        else:
+                            parameter_ws.cell(row=data_rows, column=7).value = "The default value is NOK"
+                            parameter_ws.cell(row=data_rows, column=8).value = NonASIL.cell(row=i, column=8).value
+                            parameter_ws.cell(row=data_rows, column=9).value = NonASIL.cell(row=i, column=4).value
+
+            if checkisOK == False:
+                parameter_ws.cell(row=data_rows, column=7).value = "The parameter is not found in NVM"
+
+    parameter_wb.save(parameter)
+    parameter_wb.close()
+    nvm_wb.close()
+
 
 def BCM_Check(nvm, coding, parameter):
-    print("BCM Check")
-    #open file nvm
-    nvm_file = load_workbook(nvm)
-
-    coding_file = load_workbook(coding)
-    data_coding_file = coding_file.active
-    max_row = data_coding_file.max_row
-    max_column = data_coding_file.max_column
-
-    data_coding_file.cell(row=1, column=11).value = "Default Value by Number"
-    ##
-    for data_rows in range(2,max_row + 1):
-        req = data_coding_file.cell(row=data_rows, column = Co_ObjectContent_F).value
-        if req == "Requirement":
-            #Requirement then we will check the default value
-            defaultvalue = data_coding_file.cell(row=data_rows, column = Co_defaultvalue_title).value
-
-            #this column is the 1st value of default value in text
-            defaultvalue_c1 = data_coding_file.cell(row=data_rows, column = 7).value
-
-            # this column is the 2nd value of default value in text
-            defaultvalue_c2 = data_coding_file.cell(row=data_rows, column = 9).value
-
-            default_value = data_coding_file.cell(row=data_rows, column=11).value
-            if defaultvalue == defaultvalue_c1:
-                default_value = data_coding_file.cell(row=data_rows, column = 8).value
-            elif defaultvalue == defaultvalue_c2:
-                default_value = data_coding_file.cell(row=data_rows, column=10).value
-            else:
-                default_value = "NOK"
-        else:
-            data_coding_file.cell(row=data_rows, column=11).value = "NOT REQUIREMENT"
-
-    coding_file.save(coding)
-    coding_file.close()
-
-    parameter_file = load_workbook(parameter)
+    BCM_Coding_Check(coding, nvm)
+    BCM_Parameter_Check(parameter, nvm)
+    print("Finished!")
 
 #GUI
 class GUI(tkinter.Frame):
