@@ -399,6 +399,7 @@ class GUI(tkinter.Frame):
             if self.GCAPE.get() == 1:
                 #Perform GCAPE project
                 print("gcape")
+                print("This functions is updating")
                 #GCAPE_Check(nvm_pfile, coding_pfile, parameter_pfile)
 
             elif self.BCM.get() == 1:
