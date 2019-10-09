@@ -192,6 +192,7 @@ def BCM_Parameter_Check(parameter, nvm):
     ASILA = nvm_wb['ASILAParameter']
     ASILB = nvm_wb['ASILBParameter']
     NonASIL = nvm_wb['NonASILParameter']
+    HWParameter = nvm_wb['HWParameter']
 
     parameter_wb = load_workbook(parameter)
     parameter_ws = parameter_wb.active
@@ -210,47 +211,61 @@ def BCM_Parameter_Check(parameter, nvm):
         par_safety = parameter_ws.cell(row=data_rows, column=5).value
 
         #value = par_default_value / par_resolution
-        if req == "Requirement":
+        #if req == "Requirement":
+        if par_name[0:4] == "p_n_" or par_name[0:4] == "p_t_":
             checkisOK = False
-            if par_safety == "ASIL A":
-                for i in range(2, ASILA.max_row + 1):
-                    if ASILA.cell(row=i, column=2).value == par_name:
-                        checkisOK = True
-                        if ASILA.cell(row=i, column=4).value * par_resolution == par_default_value:
-                            parameter_ws.cell(row=data_rows, column=7).value = "OK"
-                            parameter_ws.cell(row=data_rows, column=8).value = ASILA.cell(row=i, column=8).value
-                            parameter_ws.cell(row=data_rows, column=9).value = ASILA.cell(row=i, column=4).value
-                        else:
-                            parameter_ws.cell(row=data_rows, column=7).value = "The default value is NOK"
-                            parameter_ws.cell(row=data_rows, column=8).value = ASILA.cell(row=i, column=8).value
-                            parameter_ws.cell(row=data_rows, column=9).value = ASILA.cell(row=i, column=4).value
-            elif par_safety == "ASIL B":
-                for i in range(2, ASILB.max_row + 1):
-                    if ASILB.cell(row=i, column=2).value == par_name:
-                        checkisOK = True
-                        if ASILB.cell(row=i, column=4).value * par_resolution == par_default_value:
-                            parameter_ws.cell(row=data_rows, column=7).value = "OK"
-                            parameter_ws.cell(row=data_rows, column=8).value = ASILB.cell(row=i, column=8).value
-                            parameter_ws.cell(row=data_rows, column=9).value = ASILB.cell(row=i, column=4).value
-                        else:
-                            parameter_ws.cell(row=data_rows, column=7).value = "The default value is NOK"
-                            parameter_ws.cell(row=data_rows, column=8).value = ASILB.cell(row=i, column=8).value
-                            parameter_ws.cell(row=data_rows, column=9).value = ASILB.cell(row=i, column=4).value
-            elif par_safety == "QM":
-                for i in range(2, NonASIL.max_row + 1):
-                    if NonASIL.cell(row=i, column=2).value == par_name:
-                        checkisOK = True
-                        if NonASIL.cell(row=i, column=4).value * par_resolution == par_default_value:
-                            parameter_ws.cell(row=data_rows, column=7).value = "OK"
-                            parameter_ws.cell(row=data_rows, column=8).value = NonASIL.cell(row=i, column=8).value
-                            parameter_ws.cell(row=data_rows, column=9).value = NonASIL.cell(row=i, column=4).value
-                        else:
-                            parameter_ws.cell(row=data_rows, column=7).value = "The default value is NOK"
-                            parameter_ws.cell(row=data_rows, column=8).value = NonASIL.cell(row=i, column=8).value
-                            parameter_ws.cell(row=data_rows, column=9).value = NonASIL.cell(row=i, column=4).value
+            #if par_safety == "ASIL A":
+            for i in range(2, ASILA.max_row + 1):
+                if ASILA.cell(row=i, column=2).value == par_name:
+                    checkisOK = True
+                    if ASILA.cell(row=i, column=4).value * par_resolution == par_default_value:
+                        parameter_ws.cell(row=data_rows, column=7).value = "OK"
+                        parameter_ws.cell(row=data_rows, column=8).value = ASILA.cell(row=i, column=8).value
+                        parameter_ws.cell(row=data_rows, column=9).value = ASILA.cell(row=i, column=4).value
+                    else:
+                        parameter_ws.cell(row=data_rows, column=7).value = "The default value is NOK"
+                        parameter_ws.cell(row=data_rows, column=8).value = ASILA.cell(row=i, column=8).value
+                        parameter_ws.cell(row=data_rows, column=9).value = ASILA.cell(row=i, column=4).value
+            #elif par_safety == "ASIL B":
+            for i in range(2, ASILB.max_row + 1):
+                if ASILB.cell(row=i, column=2).value == par_name:
+                    checkisOK = True
+                    if ASILB.cell(row=i, column=4).value * par_resolution == par_default_value:
+                        parameter_ws.cell(row=data_rows, column=7).value = "OK"
+                        parameter_ws.cell(row=data_rows, column=8).value = ASILB.cell(row=i, column=8).value
+                        parameter_ws.cell(row=data_rows, column=9).value = ASILB.cell(row=i, column=4).value
+                    else:
+                        parameter_ws.cell(row=data_rows, column=7).value = "The default value is NOK"
+                        parameter_ws.cell(row=data_rows, column=8).value = ASILB.cell(row=i, column=8).value
+                        parameter_ws.cell(row=data_rows, column=9).value = ASILB.cell(row=i, column=4).value
+            # elif par_safety == "QM":
+            for i in range(2, NonASIL.max_row + 1):
+                if NonASIL.cell(row=i, column=2).value == par_name:
+                    checkisOK = True
+                    if NonASIL.cell(row=i, column=4).value * par_resolution == par_default_value:
+                        parameter_ws.cell(row=data_rows, column=7).value = "OK"
+                        parameter_ws.cell(row=data_rows, column=8).value = NonASIL.cell(row=i, column=8).value
+                        parameter_ws.cell(row=data_rows, column=9).value = NonASIL.cell(row=i, column=4).value
+                    else:
+                        parameter_ws.cell(row=data_rows, column=7).value = "The default value is NOK"
+                        parameter_ws.cell(row=data_rows, column=8).value = NonASIL.cell(row=i, column=8).value
+                        parameter_ws.cell(row=data_rows, column=9).value = NonASIL.cell(row=i, column=4).value
+            # else:
+            for i in range(2, HWParameter.max_row + 1):
+                if HWParameter.cell(row=i, column=2).value == par_name:
+                    checkisOK = True
+                    if HWParameter.cell(row=i, column=4).value * par_resolution == par_default_value:
+                        parameter_ws.cell(row=data_rows, column=7).value = "OK"
+                        parameter_ws.cell(row=data_rows, column=8).value = HWParameter.cell(row=i, column=8).value
+                        parameter_ws.cell(row=data_rows, column=9).value = HWParameter.cell(row=i, column=4).value
+                    else:
+                        parameter_ws.cell(row=data_rows, column=7).value = "The default value is NOK"
+                        parameter_ws.cell(row=data_rows, column=8).value = HWParameter.cell(row=i, column=8).value
+                        parameter_ws.cell(row=data_rows, column=9).value = HWParameter.cell(row=i, column=4).value
 
             if checkisOK == False:
                 parameter_ws.cell(row=data_rows, column=7).value = "The parameter is not found in NVM"
+                
 
     parameter_wb.save(parameter)
     parameter_wb.close()
