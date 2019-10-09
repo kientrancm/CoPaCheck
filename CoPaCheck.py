@@ -33,10 +33,77 @@ def cvt_xls_to_xlsx(src_file_path, name):
 
     book_xlsx.save(name+".xlsx")
 
+def GCAPE_Coding(coding, nvm):
+    print("Check coding..")
+    nvmwb = load_workbook(nvm)
+    coding_nvm = nvmwb['Coding']
+    codingwb = load_workbook(coding)
+    codingws = codingwb.active
+
+    codingws.cell(row=1, column=5).value = "Status"
+    codingws.cell(row=1, column=6).value = "Default value on NVM"
+
+    for data_row in range(2, codingws.max_row + 1):
+        coding_name = codingws.cell(row=data_row, column=2).value
+        if coding_name[0:2] == "K_":
+            checkisOK = False
+            for i in range(2, coding_nvm.max_row+1):
+                if coding_name == coding_nvm.cell(row=i, column=2).value:
+                    checkisOK = True
+                    if coding_nvm.cell(row=i, column=4).value == codingws.cell(row=data_row, column=3).value:
+                        codingws.cell(row=data_row, column=5).value = "OK"
+                        codingws.cell(row=data_row, column=6).value = coding_nvm.cell(row=i, column=4).value
+                    else:
+                        codingws.cell(row=data_row, column=5).value = "The default value is not OK"
+                        codingws.cell(row=data_row, column=6).value = coding_nvm.cell(row=i, column=4).value
+
+            if checkisOK == False:
+                codingws.cell(row=data_row, column=5).value = "The coding not found in NVM"
+
+    codingwb.save(coding)
+    codingwb.close()
+    nvmwb.close()
+
+def GCAPE_Parameter(coding, nvm):
+    print("Check parameter..")
+    nvmwb = load_workbook(nvm)
+    coding_nvm = nvmwb['Parameter']
+    codingwb = load_workbook(coding)
+    codingws = codingwb.active
+
+    codingws.cell(row=1, column=5).value = "Status"
+    codingws.cell(row=1, column=6).value = "Default value on NVM"
+    codingws.cell(row=1, column=7).value = "Virtual Address"
+
+    for data_row in range(2, codingws.max_row + 1):
+        coding_name = codingws.cell(row=data_row, column=2).value
+        if coding_name[0:4] == "PAR_":
+            checkisOK = False
+            for i in range(2, coding_nvm.max_row+1):
+                if coding_name == coding_nvm.cell(row=i, column=2).value:
+                    checkisOK = True
+                    if int(float(coding_nvm.cell(row=i, column=4).value * coding_nvm.cell(row=i, column=9).value)) == codingws.cell(row=data_row, column=3).value:
+                        codingws.cell(row=data_row, column=5).value = "OK"
+                        codingws.cell(row=data_row, column=6).value = coding_nvm.cell(row=i, column=4).value
+                        codingws.cell(row=data_row, column=7).value = coding_nvm.cell(row=i, column=8).value
+                    else:
+                        codingws.cell(row=data_row, column=5).value = "The default value is not OK"
+                        codingws.cell(row=data_row, column=6).value = coding_nvm.cell(row=i, column=4).value
+                        codingws.cell(row=data_row, column=7).value = coding_nvm.cell(row=i, column=8).value
+
+            if checkisOK == False:
+                codingws.cell(row=data_row, column=5).value = "The coding not found in NVM"
+
+    codingwb.save(coding)
+    codingwb.close()
+    nvmwb.close()
+
 #GCAPE
 def GCAPE_Check(nvm, coding, parameter):
     print("GCAPE Check")
-
+    GCAPE_Coding(coding, nvm)
+    GCAPE_Parameter(parameter, nvm)
+    print("Finished")
 
 
 
@@ -92,9 +159,6 @@ def find_coding(name, default, nvm):
     else:
         pass
         #not in coding
-
-
-
 
 #----------------------------------------------------
 #DefaultValue from Text to number
@@ -271,7 +335,6 @@ def BCM_Parameter_Check(parameter, nvm):
     parameter_wb.close()
     nvm_wb.close()
 
-
 def BCM_Check(nvm, coding, parameter):
     BCM_Coding_Check(coding, nvm)
     BCM_Parameter_Check(parameter, nvm)
@@ -413,9 +476,7 @@ class GUI(tkinter.Frame):
 
             if self.GCAPE.get() == 1:
                 #Perform GCAPE project
-                print("gcape")
-                print("This functions is updating")
-                #GCAPE_Check(nvm_pfile, coding_pfile, parameter_pfile)
+                GCAPE_Check(nvm_pfile, coding_pfile, parameter_pfile)
 
             elif self.BCM.get() == 1:
                 #Perform BCM project
