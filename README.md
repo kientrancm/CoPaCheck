@@ -6,6 +6,14 @@ An Input files:
 1. Coding excel file exported from DOORS
 2. Parameter excel file exported from DOORS
 3. NVM file of project
+
+Lib:
+1. Python37
+2. openpyxl
+3. xlrd
+How to install in Hella:
+pip install --proxy http://userid:password@vnshccvproxy01v.cn.hella.com:3128 <package>
+
 ------------------------
 
 Author:
