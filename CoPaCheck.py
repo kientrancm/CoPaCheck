@@ -82,7 +82,7 @@ def GCAPE_Parameter(coding, nvm):
             for i in range(2, coding_nvm.max_row+1):
                 if coding_name == coding_nvm.cell(row=i, column=2).value:
                     checkisOK = True
-                    if int(float(coding_nvm.cell(row=i, column=4).value * coding_nvm.cell(row=i, column=9).value)) == codingws.cell(row=data_row, column=3).value:
+                    if round(coding_nvm.cell(row=i, column=4).value * coding_nvm.cell(row=i, column=9).value,2) == codingws.cell(row=data_row, column=3).value:
                         codingws.cell(row=data_row, column=5).value = "OK"
                         codingws.cell(row=data_row, column=6).value = coding_nvm.cell(row=i, column=4).value
                         codingws.cell(row=data_row, column=7).value = coding_nvm.cell(row=i, column=8).value
@@ -282,7 +282,7 @@ def BCM_Parameter_Check(parameter, nvm):
             for i in range(2, ASILA.max_row + 1):
                 if ASILA.cell(row=i, column=2).value == par_name:
                     checkisOK = True
-                    if ASILA.cell(row=i, column=4).value * par_resolution == par_default_value:
+                    if round(ASILA.cell(row=i, column=4).value * par_resolution, 2) == par_default_value:
                         parameter_ws.cell(row=data_rows, column=7).value = "OK"
                         parameter_ws.cell(row=data_rows, column=8).value = ASILA.cell(row=i, column=8).value
                         parameter_ws.cell(row=data_rows, column=9).value = ASILA.cell(row=i, column=4).value
@@ -294,7 +294,7 @@ def BCM_Parameter_Check(parameter, nvm):
             for i in range(2, ASILB.max_row + 1):
                 if ASILB.cell(row=i, column=2).value == par_name:
                     checkisOK = True
-                    if ASILB.cell(row=i, column=4).value * par_resolution == par_default_value:
+                    if round(ASILB.cell(row=i, column=4).value * par_resolution,2) == par_default_value:
                         parameter_ws.cell(row=data_rows, column=7).value = "OK"
                         parameter_ws.cell(row=data_rows, column=8).value = ASILB.cell(row=i, column=8).value
                         parameter_ws.cell(row=data_rows, column=9).value = ASILB.cell(row=i, column=4).value
@@ -306,7 +306,7 @@ def BCM_Parameter_Check(parameter, nvm):
             for i in range(2, NonASIL.max_row + 1):
                 if NonASIL.cell(row=i, column=2).value == par_name:
                     checkisOK = True
-                    if NonASIL.cell(row=i, column=4).value * par_resolution == par_default_value:
+                    if round(NonASIL.cell(row=i, column=4).value * par_resolution,2) == par_default_value:
                         parameter_ws.cell(row=data_rows, column=7).value = "OK"
                         parameter_ws.cell(row=data_rows, column=8).value = NonASIL.cell(row=i, column=8).value
                         parameter_ws.cell(row=data_rows, column=9).value = NonASIL.cell(row=i, column=4).value
@@ -318,7 +318,7 @@ def BCM_Parameter_Check(parameter, nvm):
             for i in range(2, HWParameter.max_row + 1):
                 if HWParameter.cell(row=i, column=2).value == par_name:
                     checkisOK = True
-                    if HWParameter.cell(row=i, column=4).value * par_resolution == par_default_value:
+                    if round(HWParameter.cell(row=i, column=4).value * par_resolution,2) == par_default_value:
                         parameter_ws.cell(row=data_rows, column=7).value = "OK"
                         parameter_ws.cell(row=data_rows, column=8).value = HWParameter.cell(row=i, column=8).value
                         parameter_ws.cell(row=data_rows, column=9).value = HWParameter.cell(row=i, column=4).value
